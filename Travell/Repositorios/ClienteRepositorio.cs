@@ -1,4 +1,5 @@
-﻿using Travell.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using Travell.Data;
 using Travell.Models;
 using Travell.Repositorios.Interface;
 
@@ -13,26 +14,54 @@ namespace Travell.Repositorios
             _dbContext = travelDbContext;
         }
 
-        public Task<ClienteModel> Adicionar(ClienteModel cliente)
+        public async Task<ClienteModel> Adicionar(ClienteModel cliente)
         {
-            throw new NotImplementedException();
+            await _dbContext.Clientes.AddAsync(cliente);
+            await _dbContext.SaveChangesAsync();
+
+            return cliente;
         }
 
-        public Task<bool> Apagar(int id)
+        public async Task<bool> Apagar(int id)
         {
-            throw new NotImplementedException();
+            ClienteModel clientePorId = await BuscarPorId(id);
+            if (clientePorId == null)
+            {
+                throw new Exception($"Cliente para o ID: {id} não foi encontrado no banco de dados.");
+            }
+
+            _dbContext.Clientes.Remove(clientePorId);
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
-        public Task<ClienteModel> Atualizar(ClienteModel cliente, int id)
+
+
+        public async Task<ClienteModel> Atualizar(ClienteModel cliente, int id)
         {
-            throw new NotImplementedException();
+            ClienteModel clientePorId = await BuscarPorId(id);
+            if(clientePorId == null)
+            {
+                throw new Exception($"Cliente para o ID: {id} não foi encontrado no banco de dados.");
+            }
+
+            clientePorId.Email = cliente.Email;
+            clientePorId.Cpf = cliente.Cpf;
+            clientePorId.Data_nascimento = cliente.Data_nascimento;
+
+            _dbContext.Clientes.Update(clientePorId);
+            await _dbContext.SaveChangesAsync();
+
+            return clientePorId;
         }
-        public Task<ClienteModel> BuscarPorId(int id)
+
+        public async Task<ClienteModel> BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Clientes.FirstOrDefaultAsync(x => x.Id == id); ()
         }
-        public Task<List<ClienteModel>> BuscarTodosUsuarios()
+
+        public async Task<List<ClienteModel>> BuscarTodosUsuarios()
         {
-            throw new NotImplementedException();
+            return await _dbContext.Clientes.ToListAsync();
         }
 
     }
