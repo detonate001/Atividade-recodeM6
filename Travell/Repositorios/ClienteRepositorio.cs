@@ -59,7 +59,7 @@ namespace Travell.Repositorios
             return await _dbContext.Clientes.FirstOrDefaultAsync(x => x.Id == id); ()
         }
 
-        public async Task<List<ClienteModel>> BuscarTodosUsuarios()
+        public async Task<List<ClienteModel>> BuscarTodosClientes()
         {
             return await _dbContext.Clientes.ToListAsync();
         }

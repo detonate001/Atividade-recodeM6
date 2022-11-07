@@ -1,3 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+using Travell.Data;
+using Travell.Repositorios;
+using Travell.Repositorios.Interface;
+using Microsoft.OpenApi.Models;
+
 namespace Travell
 {
     public class Program
@@ -11,7 +17,14 @@ namespace Travell
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggergen();
+
+            builder.Services.AddEntityFrameworkSqlServer()
+               .AddDbContext<TravelDbContext>(
+                   options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataBase"))
+               );
+
+            builder.Services.AddScoped<IClienteRepositorio, ClienteRepositorio>
 
             var app = builder.Build();
 
